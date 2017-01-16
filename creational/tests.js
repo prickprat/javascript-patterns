@@ -38,3 +38,41 @@ describe('module pattern', () => {
         Database.get('id1').should.be.equal('some-data');
     });
 });
+
+describe('factory pattern', () => {
+    const dbs = require('./factory');
+
+    it('should dynamically type instances', () => {
+        let localDb = require('./module');
+
+        dbs.remote.should.not.equal(localDb);
+        dbs.remote.should.not.equal(dbs.local);
+        dbs.local.should.equal(localDb);
+    });
+
+    it('should save and get data to individual instances', () => {
+        dbs.local.save('id1', 'some-data');
+        should.not.exist(dbs.remote.get('id1'));
+    });
+});
+
+describe('singleton pattern', () => {
+
+    it('should initialise on first-use', () => {
+        const Singleton = require('./singleton');
+        let s = Singleton;
+
+        s._isInitialised().should.be.false;
+        should.exist(s.getInstance());
+        s._isInitialised().should.be.true;
+    });
+
+    it('should provide a global point of access to it.', () => {
+        const Singleton = require('./singleton');
+
+        let s1 = Singleton;
+        let s2 = Singleton;
+
+        s1.getInstance().should.equal(s2.getInstance());
+    });
+});
